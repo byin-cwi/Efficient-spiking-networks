@@ -45,7 +45,8 @@ Finally, we’d love to hear form you if you have any comments or suggestions.
 ### References
 
 
-[1] Bojian Yin, Federico Corradi, Sander M. Bohté. **Accurate and efficient time-domain classification with adaptive spiking recurrent neural networks**
-[2] Bojian Yin, Federico Corradi, Sander M. Bohté. **Effective and efficient computation with multiple-timescale spiking recurrent neural networks**
+[1]. Bojian Yin, Federico Corradi, Sander M. Bohté. **Accurate and efficient time-domain classification with adaptive spiking recurrent neural networks**
+
+[2]. Bojian Yin, Federico Corradi, Sander M. Bohté. **Effective and efficient computation with multiple-timescale spiking recurrent neural networks**
 
 
