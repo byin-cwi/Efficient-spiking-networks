@@ -17,7 +17,7 @@ This is what you need:
 	6. TIMIT Acoustic-Phonetic Continuous Speech Corpus
  are public in LDC(https://catalog.ldc.upenn.edu/LDC93S1)
 
-3)Pre-request
+3) Pre-request
 
 - Python 3: HDF5, OpenCV 2 interfaces for python.
 - Pytorch>=1.5.1
@@ -36,7 +36,7 @@ You also allow changing the sampling frequency to generate a higher precision da
 mkdir  model
 python train.py
 ‘’’
-* Visualization of the results. The results can be visualized by [Jupyter Notebook]([Project Jupyter | Home](https://jupyter.org/))
+* Visualization of the results(Demo). The results can be visualized by [Jupyter Notebook]([Project Jupyter | Home](https://jupyter.org/))
 * Pre-trained models were attached in the folder of each dataset. Because the training takes a quite long time and 
 
 
