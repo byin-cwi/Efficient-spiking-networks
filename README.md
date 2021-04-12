@@ -1,6 +1,6 @@
 # Adaptive (SRNN) Spiking Recurrent  Neural network 
 
-This code was implementing the adaptive spiking recurrent network with learnable parameters on [Pytorch]([PyTorch](https://pytorch.org/)) for various tasks. 
+This code implements the adaptive spiking recurrent network with learnable parameters on [Pytorch]([PyTorch](https://pytorch.org/)) for various tasks. 
 Unfortunately, we’re not very good at coding, so you’ll find that the code is messy, not well documented, and crazily written. However, that shouldn’t discourage you from trying it out. In the next few months, we plan to slowly make this code more user-friendly, extend it to more interesting and complex datasets with lower precision weights.
 
 
