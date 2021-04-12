@@ -9,12 +9,12 @@ For those wanting to try it out: The best place to start is the Jupyter notebook
 This is what you need:
 1) A working version of python and Pytorch This should be easy: a simple installation on your laptop could probabily just be done with pip. ([Start Locally | PyTorch](https://pytorch.org/get-started/locally/))
 2) The dataset: 
-	a. ECG: The original QTDB dataset was download from [PhysioNet](https://physionet.org/content/qtdb/1.0.0/) The encoded dataset was attached in /data/ folder 
-  	b. (P)S-MNIST: This dataset could easily found in torchvision.datasets.MNIST
- 	c. SHD and SSC: the Spiking Heidelberg dataset could be download from the [official sit]( https://compneuro.net/datasets/)
-	d. SoLi dataset: The official   [dataset](https://polybox.ethz.ch/index.php/s/wG93iTUdvRU8EaT)  can be easily download and other necessary information is well documented in official git[GitHub - simonwsw/deep-soli: Gesture Recognition Using Neural Networks with Google’s Project Soli Sensor](https://github.com/simonwsw/deep-soli)
-	e. Google [Speech Commands Dataset](http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz) 
-	f. TIMIT Acoustic-Phonetic Continuous Speech Corpus
+	1. ECG: The original QTDB dataset was download from [PhysioNet](https://physionet.org/content/qtdb/1.0.0/) The encoded dataset was attached in /data/ folder 
+  	2. (P)S-MNIST: This dataset could easily found in torchvision.datasets.MNIST
+ 	3. SHD and SSC: the Spiking Heidelberg dataset could be download from the [official sit]( https://compneuro.net/datasets/)
+	4. SoLi dataset: The official   [dataset](https://polybox.ethz.ch/index.php/s/wG93iTUdvRU8EaT)  can be easily download and other necessary information is well documented in official git[GitHub - simonwsw/deep-soli: Gesture Recognition Using Neural Networks with Google’s Project Soli Sensor](https://github.com/simonwsw/deep-soli)
+	5. Google [Speech Commands Dataset](http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz) 
+	6. TIMIT Acoustic-Phonetic Continuous Speech Corpus
  are public in LDC(https://catalog.ldc.upenn.edu/LDC93S1)
 
 3)Pre-request
