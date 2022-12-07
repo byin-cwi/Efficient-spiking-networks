@@ -393,10 +393,6 @@ if __name__ == '__main__':
 
     model = RNN_custom(input_size, stride,hidden_dims, output_dim,DC_f=DC_f)
 
-    # model = torch.load('./model/model_98.21_Task-smnist||Time-30-06-2020 16:33:05||EC_f--rbf||DC_f--adp-spike||multiinput-multi_input.pth')
-    # model = torch.load('./model/model_98.29_Task-smnist||Time-10-02-2021 14:52:25||EC_f--rbf||DC_f--adp-spike||multiinput-multi_input.pth')
-    # model = torch.load('./model_93.81_Task-psmnist||Time-18-12-2020 13:18:32||EC_f--rbf||DC_f--adp-mem||multiinput-multi_input.pth')
-
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device:",device)
     model.to(device)
@@ -464,4 +460,4 @@ if __name__ == '__main__':
         plt.ylabel('Accuracy: %')
         plt.show()
 
-# python s_mnist-gpu.py --task smnist --ec_f rbf --dc_f adp-spike 
+
