@@ -15,14 +15,14 @@ from tqdm import tqdm
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument("--task", help="choose the task: smnist and psmnist", type=str,default="smnist")
+parser.add_argument("--task", help="choose the task: smnist and psmnist", type=str,default="psmnist")
 parser.add_argument("--ec_f", help="choose the encode function: rbf, rbf-lc, poisson", type=str,default='rbf')
 parser.add_argument("--dc_f", help="choose the decode function: adp-mem, adp-spike, integrator", type=str,default='adp-spike')#'integrator')
 parser.add_argument("--batch_size", help="set the batch_size", type=int,default=300)
 parser.add_argument("--encoder", help="set the number of encoder", type=int,default=80)
 parser.add_argument("--num_epochs", help="set the number of epoch", type=int,default=200)
 parser.add_argument("--learning_rate", help="set the learning rate", type=float,default=8e-3)
-parser.add_argument("--len", help="set the length of the gaussian", type=float,default=0.3)
+parser.add_argument("--len", help="set the length of the gaussian", type=float,default=0.5)
 parser.add_argument('--network', nargs='+', type=int,default=[64,256,256])
 
 torch.manual_seed(0)
@@ -49,12 +49,12 @@ def load_dataset(task='smnist'):
 '''
 STEP 3a_v2: CREATE Adaptative spike MODEL CLASS
 '''
-b_j0 = 0.1  # neural threshold baseline
+b_j0 = 0.01  # neural threshold baseline
 tau_m = 20  # ms membrane potential constant
 R_m = 1  # membrane resistance
 dt = 1  #
 gamma = .5  # gradient scale
-lens = .3 # .5
+lens = 0.5
 
 def gaussian(x, mu=0., sigma=.5):
     return torch.exp(-((x - mu) ** 2) / (2 * sigma ** 2)) / torch.sqrt(2 * torch.tensor(math.pi)) / sigma
@@ -151,10 +151,12 @@ class RNN_custom(nn.Module):
         self.tau_m_d1 = nn.Parameter(torch.Tensor(self.d1_dim))
         self.tau_m_o = nn.Parameter(torch.Tensor(self.output_size))
  
-        nn.init.orthogonal_(self.h2h.weight)
+        # nn.init.orthogonal_(self.h2h.weight)
+        nn.init.zeros_(self.h2h.weight)
         nn.init.xavier_uniform_(self.i2h.weight)
         nn.init.xavier_uniform_(self.h2d.weight)
-        nn.init.orthogonal_(self.d2d.weight)
+        # nn.init.orthogonal_(self.d2d.weight)
+        nn.init.zeros_(self.d2d.weight)
         nn.init.xavier_uniform_(self.dense1.weight)
         nn.init.xavier_uniform_(self.d2o.weight)
         
@@ -177,7 +179,7 @@ class RNN_custom(nn.Module):
 
         nn.init.normal_(self.tau_m_r1, 20,5)
         nn.init.normal_(self.tau_m_r2, 20,5)
-        nn.init.normal_(self.tau_m_o, 20,1)
+        nn.init.normal_(self.tau_m_o, 20,5)
         nn.init.normal_(self.tau_m_d1, 20,5)
 
         self.b_r1 =self.b_r2 = self.b_o  = self.b_d1  = 0
@@ -196,7 +198,7 @@ class RNN_custom(nn.Module):
         l2_spikes = []
         l3_spikes = []
         out_spikes = []
-        input = input/255.
+        input = (input/255.).gt(0.1).float()
         input_steps  = self.compute_input_steps(seq_num)
 
         for i in range(input_steps):
@@ -273,13 +275,13 @@ def train(model, num_epochs,train_loader,test_loader,file_name,MyFile):
     for epoch in range(num_epochs):
         correct = 0
         total = 0
-        for i, (images, labels) in enumerate(tqdm(test_loader)):
+        for i, (images, labels) in enumerate(tqdm(train_loader)):
             images = images.view(-1, seq_dim, input_dim).requires_grad_().to(device)
             labels = labels.long().to(device)
             # Clear gradients w.r.t. parameters
             optimizer.zero_grad()
             # Forward pass to get output/logits
-            outputs, _ = model(images,labels,tbptt_steps=200,Training=True,optimizer=optimizer)
+            outputs, _ = model(images,labels,tbptt_steps=100,Training=True,optimizer=optimizer)
             # Calculate Loss: softmax --> cross entropy loss
             loss = model.criterion(outputs, labels)
             # Getting gradients w.r.t. parameters
@@ -381,11 +383,11 @@ if __name__ == '__main__':
 
     train_dataset,test_dataset = load_dataset(task)
     train_loader = torch.utils.data.DataLoader(dataset=train_dataset,batch_size=batch_size,shuffle=True)
-    test_loader = torch.utils.data.DataLoader(dataset=test_dataset,batch_size=batch_size,shuffle=False)
+    test_loader = torch.utils.data.DataLoader(dataset=test_dataset,batch_size=batch_size,shuffle=True)
 
 
     input_dim = 1
-    input_size=1
+    input_size=4
     stride = 1
     hidden_dims = args.network#[256,128]
     output_dim = 10
@@ -397,6 +399,8 @@ if __name__ == '__main__':
     print("device:",device)
     model.to(device)
 
+    accuracy = test(model,test_loader)
+    print('test Accuracy: ', accuracy)
     criterion = nn.CrossEntropyLoss()
     learning_rate = args.learning_rate
 
@@ -415,21 +419,22 @@ if __name__ == '__main__':
                 model.dense1.weight, model.dense1.bias, 
                 model.d2o.weight, model.d2o.bias]
 
-    optimizer = torch.optim.Adam([
+    optimizer = torch.optim.Adamax([
         {'params': base_params},
-        {'params': model.tau_adp_r1, 'lr': learning_rate * 5},
-        {'params': model.tau_adp_r2, 'lr': learning_rate * 5},
-        {'params': model.tau_adp_d1, 'lr': learning_rate * 5},
-        {'params': model.tau_adp_o, 'lr': learning_rate * 5},
+        {'params': model.tau_adp_r1, 'lr': learning_rate * 3},
+        {'params': model.tau_adp_r2, 'lr': learning_rate * 3},
+        {'params': model.tau_adp_d1, 'lr': learning_rate * 3},
+        {'params': model.tau_adp_o, 'lr': learning_rate * 3},
         {'params': model.tau_m_r1, 'lr': learning_rate * 2},
         {'params': model.tau_m_r2, 'lr': learning_rate * 2},
         {'params': model.tau_m_d1, 'lr': learning_rate * 2},
-        {'params': model.tau_m_o, 'lr': learning_rate * 2},],
+        {'params': model.tau_m_o, 'lr': learning_rate * 2},
+        ],
         lr=learning_rate)
 
 
     # scheduler = StepLR(optimizer, step_size=25, gamma=.75)
-    #scheduler = MultiStepLR(optimizer, milestones=[25,50,100,150],gamma=0.5)
+    # scheduler = MultiStepLR(optimizer, milestones=[25,50,100,150],gamma=0.5)
     # scheduler = MultiStepLR(optimizer, milestones=[50,100,150],gamma=0.5)
     scheduler = LambdaLR(optimizer,lr_lambda=lambda epoch:1-epoch/200)
 
@@ -443,7 +448,6 @@ if __name__ == '__main__':
     MyFile.write('\nlearning_rate: '+str(learning_rate))
     MyFile.write('\nbatch_size: '+str(batch_size))
     MyFile.write('\n\n =========== Result ======== \n')
-
     acc = train(model, num_epochs,train_loader,test_loader,file_name,MyFile)
     accuracy = test(model,test_loader)
     print('test Accuracy: ', accuracy)
@@ -459,5 +463,4 @@ if __name__ == '__main__':
         plt.xlabel('Epoch')
         plt.ylabel('Accuracy: %')
         plt.show()
-
 
