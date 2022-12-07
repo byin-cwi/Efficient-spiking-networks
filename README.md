@@ -1,4 +1,5 @@
 # Adaptive (SRNN) Spiking Recurrent  Neural network 
+**Update** upload Truncated-BPTT code to speed up the training
 
 This code implements the adaptive spiking recurrent network with learnable parameters on [Pytorch]([PyTorch](https://pytorch.org/)) for various tasks. 
 This is scientific software, and as such subject to many modifications; we aim to further improve the software to become more user-friendly and extendible in the future. 
