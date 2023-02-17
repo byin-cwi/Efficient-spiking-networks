@@ -54,7 +54,31 @@ class ActFun_adp(torch.autograd.Function):
 act_fun_adp = ActFun_adp.apply    
     
 def mem_update_adp(inputs, mem, spike, tau_adp, b, tau_m, dt=1, isAdapt=1,device=None):
+    """
+    This function updates the membrane potential and adaptation variable of a spiking neural network.
+Inputs:
+inputs: the input spikes to the neuron
+mem: the current membrane potential of the neuron
+spike: the current adaptation variable of the neuron
+tau_adp: the time constant for the adaptation variable
+b: a value used in the adaptation variable update equation
+tau_m: the time constant for the membrane potential
+dt: the time step used in the simulation
+isAdapt: a boolean variable indicating whether or not to use the adaptation variable
+device: a variable indicating which device (e.g. CPU or GPU) to use for the computation
 
+Outputs:
+mem: the updated membrane potential
+spike: the updated adaptation variable
+B: a value used in the adaptation variable update equation
+b: the updated value of the adaptation variable
+
+The function first computes the exponential decay factors alpha and ro using the time constants tau_m and tau_adp, respectively.
+It then checks whether the isAdapt variable is True or False to determine the value of beta.
+The adaptation variable b is then updated using the exponential decay rule, and B is computed using the value of beta and the initial value b_j0_value.
+The function then updates the membrane potential mem using the input spikes, B, and the decay factor alpha, and computes the inputs_ variable as the difference between mem and B.
+Finally, the adaptation variable spike is updated using the activation function defined in the act_fun_adp() function, and the updated values of mem, spike, B, and b are returned.
+    """
     alpha = torch.exp(-1. * dt / tau_m).to(device)
     ro = torch.exp(-1. * dt / tau_adp).to(device)
     if isAdapt:
